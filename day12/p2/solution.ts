@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as bmpjs from 'bmp-js';
 
 class Node {
     i: number;
@@ -59,11 +60,12 @@ fs.readFile("/dev/AOC_22/day12/p1/input.data", 'utf8', (err, data) => {
     let nodesToCheck:Array<Node> = [];
     nodesToCheck.push(end);
     visited[end.i][end.j] = 1;
+    let minRoute = 999999;
+    let maxRoute = 0;
     while (nodesToCheck.length) {
         let node = nodesToCheck.shift();
         if (heightMap[node.i][node.j] === "a") {
-            console.log(`Breaking at ${moveMap[node.i][node.j]} steps`)
-            break;
+            minRoute = Math.min(minRoute, moveMap[node.i][node.j]);
         }
         for (let move of moves) {
             if (inBounds(node.i+move.i, node.j+move.j) && 
@@ -74,9 +76,27 @@ fs.readFile("/dev/AOC_22/day12/p1/input.data", 'utf8', (err, data) => {
                 newNode.parent = node;
                 visited[node.i+move.i][node.j+move.j] = 1;
                 moveMap[node.i+move.i][node.j+move.j] = moveMap[node.i][node.j] + 1;
+                maxRoute = Math.max(maxRoute, moveMap[node.i+move.i][node.j+move.j]);
                 nodesToCheck.push(newNode);
             }
         }
     }
+    console.log(`Minimal route is ${minRoute}`)
+    let bData = new Uint8Array(numCols*numRows*4);
+    let startIndex = 0;
+    for (let i = 0; i < numRows; i++) {
+        for (let j = 0; j < numCols; j++) {
+            bData[startIndex] = 255;
+            bData[startIndex + 1] = 0;
+            bData[startIndex + 2] = 255 - Math.floor(255 * moveMap[i][j] / maxRoute);
+            bData[startIndex + 3] = 0;
+            startIndex += 4;
+        }
+    }
+    let bmpData ={data:bData,width:numCols,height:numRows};
+    let rawData = bmpjs.encode(bmpData);
+    fs.writeFile("/dev/AOC_22/day12/p2/heightmap.bmp", rawData.data, (err) => {
+        console.log(err);
+    });    
 
 });

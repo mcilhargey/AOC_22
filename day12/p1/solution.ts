@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as bmpjs from 'bmp-js';
 
 class Node {
     i: number;
@@ -78,7 +79,22 @@ fs.readFile("/dev/AOC_22/day12/p1/input.data", 'utf8', (err, data) => {
         }
     }
 
-
-    console.log(JSON.stringify(moveMap))
     console.log(`we got to end (${end.i}, ${end.j}) in ${moveMap[end.i][end.j]}`)
+    let bData = new Uint8Array(numCols*numRows*4);
+    let startIndex = 0;
+    for (let i = 0; i < numRows; i++) {
+        for (let j = 0; j < numCols; j++) {
+            bData[startIndex] = 255;
+            bData[startIndex + 1] = 0;
+            bData[startIndex + 2] = Math.floor(255 * moveMap[i][j] / moveMap[end.i][end.j]);
+            bData[startIndex + 3] = 0;
+            startIndex += 4;
+        }
+    }
+    let bmpData ={data:bData,width:numCols,height:numRows};
+    let rawData = bmpjs.encode(bmpData);
+    fs.writeFile("/dev/AOC_22/day12/p1/heightmap.bmp", rawData.data, (err) => {
+        console.log(err);
+    });    
+
 });
