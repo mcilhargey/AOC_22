@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 
-
 function renderMap(map, minPair, maxPair) {
     let mapString = "";
     for (let i = 0; i < maxPair.y + 3; i++) {
@@ -77,6 +76,21 @@ fs.readFile("/dev/AOC_22/day14/p1/input.data", 'utf8', (err, data) => {
 
     minPair.x = 500 - (maxPair.y + 3 + 1);
     maxPair.x = 500 + (maxPair.y + 3 + 1);
+
+    // function renderStep(stepindex) {
+    //     if (x === ".") {
+    //         return 0xFF000000; // black
+    //     }
+    //     else if (x === "#") {
+    //         return 0xFFF3F3F3; // light grey
+    //     }
+    //     else if (x === "o") {
+    //         return 0xFFFFa028; // BB Amber
+    //     }
+    //     else {
+    //         return 0xFF000000;
+    //     }
+    // }
 
     let hitTop = false;
     let sandGrains = 0;
